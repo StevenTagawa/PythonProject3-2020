@@ -1,7 +1,15 @@
-# Import your Game class
+"""This is the main module for the Phrase Hunter game."""
 
-# Create your Dunder Main statement.
+import game
 
-# Inside Dunder Main:
-## Create an instance of your Game class
-## Start your game by calling the instance method that starts the game loop
+# EXECUTION STARTS HERE
+if __name__ == "__main__":
+    try:
+        while True:
+            new_game = game.Game()
+            # The start method returns True if the player wants to play again.
+            if not new_game.start():
+                break
+    except KeyboardInterrupt:
+        print("\nScript halted by user.")
+# EXECUTION ENDS HERE

@@ -118,8 +118,7 @@ class Game:
         while True:
             response = input("\nGuess a letter:  ").lower()
             if self._valid_guess(response, self.guesses):
-                break
-        return response
+                return response
 
     def game_over(self, won):
         """Prints a message after the game ends.
@@ -134,7 +133,7 @@ class Game:
             print("\nCongratulations!  You guessed the phrase.")
         else:
             print("\nOh no!  You ran out of incorrect guesses.")
-            print(f"The phrase was “{self.active_phrase}.”")
+            print(f"The phrase was “{self.active_phrase.phrase}.”")
         return
 
     def _valid_guess(self, response, guessed):
@@ -163,10 +162,10 @@ class Game:
 
     def _clear(self):
         """Clears the screen (sometimes)."""
-        # Print a visual cue that the screen should clear for terminal emulators
-        # that do not recognize the system call.  (For those that do, the cue
-        # will instantly disappear.)
-        print(">"*30, "CLEAR SCREEN", "<"*30)
+        # For terminal emulators that do not recognize the system call, print
+        # five blank lines as a cue that the screen should clear.  (On terminals
+        # that do recognize "cls" or "clear", this will not be noticeable.)
+        print("\n"*5)
         os.system("cls" if "name" == "nt" else "clear")
 
     def _goodbye(self):

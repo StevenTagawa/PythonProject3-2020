@@ -50,39 +50,9 @@ class Game:
         Returns:
         True if the player wants to play again; otherwise False.
         """
-        self.active_phrase = self.get_random_phrase()
-        self._clear()
-        self.welcome()
-        while self.missed < 5:
-            self.active_phrase.display()
-            print(
-                f"\nYou have {5 - self.missed} incorrect "
-                f"{self._plural(5 - self.missed)} left.")
-            guess = self.get_guess()
-            self.guesses.append(guess)
-            self._clear()
-            if self.active_phrase.check_letter(guess):
-                print(f"Yes!  The letter “{guess}” is in the phrase!")
-            else:
-                print(f"Darn!  The letter “{guess}” isn't in the phrase.")
-                self.missed += 1
-            if self.active_phrase.check_complete():
-                break
-        # The else block executes if the player runs out of incorrect guesses.
-        else:
-            self.game_over(False)
-            if not self._play_again():
-                # The game object will be destroyed immediately upon returning
-                # to the main loop, so call the goodbye method now.
-                self._goodbye()
-                return False
-            return True
-        # This executes if the player guesses all the letters in the phrase.
-        self.game_over(True)
-        if not self._play_again():
-            self._goodbye()
-            return False
-        return True
+        self._before_game()
+        result = self._game_loop()
+        return self._after_game(result)
 
     def get_random_phrase(self):
         """Randomly selects a phrase to use in the game.
@@ -93,20 +63,6 @@ class Game:
         A phrase object.
         """
         return self.phrases[random.randint(0, 4)]
-
-    def welcome(self):
-        """Prints a welcome message.
-
-        Arguments:  None.
-
-        Returns:  Nothing.
-        """
-        print("=" * 40)
-        print("Welcome to Phrase Hunter")
-        print("\nA Treehouse Python Techdegree Project")
-        print("\nby Steven Tagawa")
-        print("=" * 40)
-        return
 
     def get_guess(self):
         """Gets a letter from the player.
@@ -136,7 +92,67 @@ class Game:
             print(f"The phrase was “{self.active_phrase.phrase}.”")
         return
 
-    def _valid_guess(self, response, guessed):
+    def _before_game(self):
+        """Do various set-up tasks."""
+        self.active_phrase = self.get_random_phrase()
+        self._clear()
+        self.welcome()
+        return
+
+    def _game_loop(self):
+        """Gets guesses from the player until they win or lose the game.
+
+        Arguments:  None.
+
+        Returns:
+        True if the player wins; False if the player loses.
+        """
+        while self.missed < 5:
+            self.active_phrase.display()
+            print(
+                f"\nYou have {5 - self.missed} incorrect "
+                f"{self._plural(5 - self.missed)} left.")
+            guess = self.get_guess()
+            self.guesses.append(guess)
+            self._clear()
+            if self.active_phrase.check_letter(guess):
+                print(f"Yes!  The letter “{guess}” is in the phrase!")
+            else:
+                print(f"Darn!  The letter “{guess}” isn't in the phrase.")
+                self.missed += 1
+            if self.active_phrase.check_complete():
+                return True
+        return False
+
+    def _after_game(self, result):
+        """Prints summary of the game; asks player if they wants to play again.
+
+        If the player wants to quit, prints the goodbye message.
+
+        Arguments:
+        result -- True or False, depending on whether the player won or lost.
+
+        Returns:
+        True if the player wants to play again; otherwise False.
+        """
+        self.game_over(result)
+        if not self._play_again():
+            self._goodbye()
+            return False
+        return True
+
+    @staticmethod
+    def welcome():
+        """Prints a welcome message."""
+        print("=" * 40)
+        print("Welcome to Phrase Hunter")
+        print("\nA Treehouse Python Techdegree Project")
+        print("\nby Steven Tagawa")
+        print("=" * 40)
+        return
+
+    @staticmethod
+    def _valid_guess(response, guessed):
         """Validates the player's input.
 
         Arguments:
@@ -146,7 +162,7 @@ class Game:
         Returns:
         True if the input is valid; otherwise False.
         """
-        if len(response) == "":
+        if len(response) == 0:
             print("You didn't guess anything!  Try again.")
             return False
         elif len(response) > 1:
@@ -160,27 +176,34 @@ class Game:
             return False
         return True
 
-    def _clear(self):
+    @staticmethod
+    def _clear():
         """Clears the screen (sometimes)."""
         # For terminal emulators that do not recognize the system call, print
         # five blank lines as a cue that the screen should clear.  (On terminals
         # that do recognize "cls" or "clear", this will not be noticeable.)
         print("\n"*5)
         os.system("cls" if "name" == "nt" else "clear")
+        return
 
-    def _goodbye(self):
-        """Prints a goodbye message.
-
-        Arguments:  None.
-
-        Returns:  Nothing.
-        """
+    @staticmethod
+    def _goodbye():
+        """Prints a goodbye message."""
         print("\n" + "=" * 40)
         print("Thanks for playing!  See you again soon!")
         print("=" * 40 + "\n")
         return
 
-    def _plural(self, number):
+    @staticmethod
+    def _plural(number):
+        """Returns the correct form of the word "guess".
+
+        Arguments:
+        number -- A number to be applied.
+
+        Returns:
+        The singular form if the number is 1; otherwise the plural form.
+        """
         if number == 1:
             return "guess"
         return "guesses"
@@ -202,7 +225,8 @@ class Game:
                 return False
         return True
 
-    def _check_yes_no(self, string):
+    @staticmethod
+    def _check_yes_no(string):
         """Checks the validity of a response to a yes/no prompt.
 
         Arguments:

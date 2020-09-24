@@ -22,6 +22,9 @@ class Game:
     game_over() -- Prints a summary message after the game ends.
 
     Private Methods:
+    _before_game() -- Sets up the game.
+    _game_loop() -- Gets guesses from the player until they win or lose.
+    _after_game() -- Displays summary; asks the user if they want to play again.
     _valid_guess() -- Verifies the validity of the player's guess.
     _clear() -- Clears the screen.
     _goodbye() -- Prints a goodbye message.

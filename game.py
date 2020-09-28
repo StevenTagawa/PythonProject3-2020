@@ -186,7 +186,7 @@ class Game:
         # five blank lines as a cue that the screen should clear.  (On terminals
         # that do recognize "cls" or "clear", this will not be noticeable.)
         print("\n"*5)
-        os.system("cls" if "name" == "nt" else "clear")
+        os.system("cls" if os.name == "nt" else "clear")
         return
 
     @staticmethod
